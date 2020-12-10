@@ -17,7 +17,7 @@ const surface = new THREE.TextureLoader().load('../assets/8k_mars.jpg');
 const planetMaterial = new THREE.MeshBasicMaterial({ map: surface });
 
 // Geometries
-const planetGeometry = new THREE.SphereGeometry(3, 128, 128);
+const planetGeometry = new THREE.SphereGeometry(10, 128, 128);
 
 // Scene
 const scene = new THREE.Scene();
@@ -30,7 +30,9 @@ const camera = new THREE.PerspectiveCamera(
   0.1,
   1000
 );
-camera.position.z = 5;
+camera.position.x = 0;
+camera.position.y = 0;
+camera.position.z = 18;
 
 // Controls
 const controls = new OrbitControls(camera, renderer.domElement);
