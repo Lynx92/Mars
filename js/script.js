@@ -1,5 +1,9 @@
 import * as THREE from 'https://threejs.org/build/three.module.js';
-import { OrbitControls } from 'https://threejs.org/examples/jsm/controls/OrbitControls.js';
+import { createScene } from './scene.js';
+import { createCamera } from './camera.js';
+import { createControls } from './controls.js';
+import { createLights } from './lights.js';
+import { createObjects } from './objects.js';
 
 // Renderer
 const renderer = new THREE.WebGLRenderer();
@@ -7,53 +11,37 @@ renderer.setSize(window.innerWidth, window.innerHeight);
 renderer.setPixelRatio(window.devicePixelRatio);
 document.body.appendChild(renderer.domElement);
 
-// Textures
-const galaxy = new THREE.TextureLoader().load(
-  '../assets/8k_stars_milky_way.jpg'
-);
-const surface = new THREE.TextureLoader().load('../assets/8k_mars.jpg');
+// Create the scene
+const scene = createScene();
 
-// Materials
-const planetMaterial = new THREE.MeshBasicMaterial({ map: surface });
+// Create the camera
+const camera = createCamera();
 
-// Geometries
-const planetGeometry = new THREE.SphereGeometry(10, 128, 128);
+// Create the controls
+const controls = createControls(camera, renderer.domElement);
 
-// Scene
-const scene = new THREE.Scene();
-scene.background = galaxy;
+// Create the lights
+createLights(scene);
 
-// Camera
-const camera = new THREE.PerspectiveCamera(
-  75,
-  window.innerWidth / window.innerHeight,
-  0.1,
-  1000
-);
-camera.position.x = 0;
-camera.position.y = 0;
-camera.position.z = 18;
+// Create the objects
+createObjects(scene);
 
-// Controls
-const controls = new OrbitControls(camera, renderer.domElement);
-
-// Lights
-const light = new THREE.DirectionalLight(0xffffff, 1);
-light.position.set(20, 20, 0);
-scene.add(light);
-scene.add(new THREE.AmbientLight(0x222222));
-
-// Objects
-const sphere = new THREE.Mesh(planetGeometry, planetMaterial);
-scene.add(sphere);
-
+// Animation function
 const animate = () => {
   requestAnimationFrame(animate);
 
-  sphere.rotation.x += 0.001;
-  sphere.rotation.y += 0.001;
-  // controls.update();
+  // Update the rotation of the objects in the scene
+  scene.children.forEach((child) => {
+    if (child instanceof THREE.Mesh) {
+      child.rotation.x += 0.001;
+      child.rotation.y += 0.001;
+    }
+  });
+
+  // Update the controls and render the scene
+  controls.update();
   renderer.render(scene, camera);
 };
 
+// Start the animation
 animate();
